@@ -7,11 +7,11 @@ import { StreamingTextResponse, generateText, streamText } from 'ai';
 import { encodeChat } from 'gpt-tokenizer';
 import { z } from 'zod';
 
-import { getLogger } from '@kit/shared/logger';
 
 import { Database } from '~/lib/database.types';
 
 import { createChatMessagesService } from '../../_lib/server/chat-messages.service';
+import { getLogger } from '@/packages/shared/src/logger';
 
 export const ChatMessagesSchema = z.object({
   messages: z.array(

@@ -5,8 +5,6 @@ import { redirect } from 'next/navigation';
 
 import { z } from 'zod';
 
-import { enhanceAction } from '@kit/next/actions';
-import { getSupabaseServerActionClient } from '@kit/supabase/server-actions-client';
 
 import { createChatLLMService } from '~/home/[account]/chat/_lib/server/chat-llm.service';
 
@@ -14,6 +12,8 @@ import { ReferenceIdSchema } from '../schema/reference-id.schema';
 import { RenameChatSchema } from '../schema/rename-chat.schema';
 import { UpdateChatSchema } from '../schema/update-chat.schema';
 import { createChatMessagesService } from './chat-messages.service';
+import { enhanceAction } from '@/packages/next/src/actions';
+import { getSupabaseServerActionClient } from '@/packages/supabase/src/clients/server-actions-client';
 
 const CreateChatSchema = z.object({
   content: z.string().min(1).max(2000),

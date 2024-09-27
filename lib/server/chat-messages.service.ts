@@ -4,11 +4,11 @@ import { SupabaseClient } from '@supabase/supabase-js';
 
 import { z } from 'zod';
 
-import { getLogger } from '@kit/shared/logger';
 
 import { Database } from '~/lib/database.types';
 
 import { ChatSettingsSchema } from '../schema/chat-settings.schema';
+import { getLogger } from '@/packages/shared/src/logger';
 
 export function createChatMessagesService(client: SupabaseClient<Database>) {
   return new ChatMessagesService(client);
