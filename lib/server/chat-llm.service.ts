@@ -3,15 +3,13 @@ import 'server-only';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { openai } from '@ai-sdk/openai';
-import { StreamingTextResponse, generateText, streamText } from 'ai';
+import { LanguageModelV1, StreamingTextResponse, generateText, streamText } from 'ai';
 import { encodeChat } from 'gpt-tokenizer';
 import { z } from 'zod';
 
-
-import { Database } from '~/lib/database.types';
-
-import { createChatMessagesService } from '../../_lib/server/chat-messages.service';
 import { getLogger } from '@/packages/shared/src/logger';
+import { createChatMessagesService } from './chat-messages.service';
+import { Database } from '../database.types';
 
 export const ChatMessagesSchema = z.object({
   messages: z.array(
@@ -62,7 +60,7 @@ class ChatLLMService {
     await this.assertEnoughCredits(params.accountId);
 
     const result = await generateText({
-      model: openai('gpt-3.5-turbo'),
+      model: openai('gpt-3.5-turbo') as LanguageModelV1,
       system:
         'You convert a user message to a chat name for a seamless experience.',
       messages: [
@@ -130,7 +128,7 @@ class ChatLLMService {
 
     // we use the openai model to generate a response
     const result = await streamText({
-      model: openai(settings.model),
+      model: openai(settings.model) as LanguageModelV1,
       system: settings.systemMessage,
       maxTokens: settings.maxTokens,
       temperature: settings.temperature,
