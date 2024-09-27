@@ -9,10 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.28",
+    "gpt-tokenizer": "^2.2.1",
+    "@kit/shared": "workspace:^",
+    "ai": "^3.3.17",
+    "@kit/next": "workspace:^",
+    "@kit/supabase": "workspace:^",
     "lucide-react": "^0.446.0",
     "next": "14.2.13",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "@supabase/supabase-js": "^2.45.1"
   },
   "devDependencies": {
     "@types/node": "^20",
