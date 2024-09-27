@@ -7,7 +7,6 @@ import { LanguageModelV1, StreamingTextResponse, generateText, streamText } from
 import { encodeChat } from 'gpt-tokenizer';
 import { z } from 'zod';
 
-import { getLogger } from '@/packages/shared/src/logger';
 import { createChatMessagesService } from './chat-messages.service';
 import { Database } from '../database.types';
 
@@ -90,7 +89,7 @@ class ChatLLMService {
     { messages, accountId }: z.infer<typeof StreamResponseSchema>,
     referenceId: string,
   ) {
-    const logger = await getLogger();
+    console.log("streamResponse for messages", messages);
 
     // use a normal service instance using the current user RLS
     const chatMessagesService = createChatMessagesService(this.adminClient);
@@ -102,12 +101,12 @@ class ChatLLMService {
       throw new Error('No messages provided');
     }
 
-    // make sure the user has enough credits
-    await this.assertEnoughCredits(accountId);
+    // // make sure the user has enough credits
+    // await this.assertEnoughCredits(accountId);
 
     // retrieve the chat settings
     const settings = await chatMessagesService.getChatSettings(referenceId);
-
+    console.log("settings", settings);
     const systemMessage = settings.systemMessage;
     const maxTokens = settings.maxTokens;
 
@@ -126,6 +125,8 @@ class ChatLLMService {
       }
     }
 
+    console.log("streaming...", decodedHistory);
+
     // we use the openai model to generate a response
     const result = await streamText({
       model: openai(settings.model) as LanguageModelV1,
@@ -134,19 +135,14 @@ class ChatLLMService {
       temperature: settings.temperature,
       messages,
     });
+    console.log("result", result);
+
 
     const stream = result.toAIStream({
       onFinal: async (completion) => {
         // get the chat ID using the reference ID
         const chatId =
           await chatMessagesService.getChatIdByReferenceId(referenceId);
-
-        logger.info(
-          {
-            chatId,
-          },
-          `Storing messages in the database`,
-        );
 
         // store messages in the DB
         await this.storeMessages({
@@ -161,23 +157,8 @@ class ChatLLMService {
           ],
         });
 
-        logger.info(
-          {
-            chatId,
-          },
-          `Messages stored in the database`,
-        );
-
         // deduct the credits from the user
         const tokensUsage = await result.usage;
-
-        logger.info(
-          {
-            tokensUsage,
-            chatId,
-          },
-          `Deducting credits from the user`,
-        );
 
         await this.adminClient.rpc('deduct_credits', {
           account_id: accountId,

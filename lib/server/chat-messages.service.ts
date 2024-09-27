@@ -7,7 +7,6 @@ import { z } from 'zod';
 
 
 import { ChatSettingsSchema } from '../schema/chat-settings.schema';
-import { getLogger } from '@/packages/shared/src/logger';
 import { Database } from '../database.types';
 
 export function createChatMessagesService(client: SupabaseClient<Database>) {
@@ -57,10 +56,6 @@ class ChatMessagesService {
       role: 'user' | 'assistant';
     }>;
   }) {
-    const logger = await getLogger();
-
-    logger.info(params, `Creating chat...`);
-
     const { data, error } = await this.client.from('chats').insert({
       reference_id: params.chatReferenceId,
       account_id: params.accountId,
@@ -68,12 +63,10 @@ class ChatMessagesService {
     });
 
     if (error) {
-      logger.error(error, `Error creating chat`);
+      console.error(error, `Error creating chat`);
 
       throw error;
     }
-
-    logger.info(data, `Successfully created chat`);
 
     return data;
   }
@@ -87,10 +80,6 @@ class ChatMessagesService {
       role: 'user' | 'assistant';
     }>;
   }) {
-    const logger = await getLogger();
-
-    logger.info(params, `Inserting messages into chat...`);
-
     console.log('Inserting message with params:', params);
 
     const { data, error } = await this.client.from('chat_messages').insert(
@@ -104,14 +93,11 @@ class ChatMessagesService {
 
     if (error) {
       console.error('Error inserting message:', error);
-      logger.error(error, `Error inserting messages into chat`);
 
       throw error;
     }
 
     console.log('Message inserted:', data);
-    logger.info(data, `Successfully inserted messages into chat`);
-
     return data;
   }
 
@@ -195,18 +181,18 @@ Please use this information to provide accurate and relevant responses and don't
   private async fetchRelevantContext(): Promise<string> {
     const context = [];
 
-    const { data: fans } = await this.client
-      .from('fans')
-      .select('country, city, product, playlist, recommendations, recentlyPlayed, saved_podcasts, saved_audiobooks, saved_shows, top_artists_long_term')
-      .limit(100);
+    // const { data: fans } = await this.client
+    //   .from('fans')
+    //   .select('country, city, product, playlist, recommendations, recentlyPlayed, saved_podcasts, saved_audiobooks, saved_shows, top_artists_long_term')
+    //   .limit(100);
 
-    if (fans?.length && fans[0]) {
-      const columns = Object.keys(fans[0]);
-      const rows = fans.map((fan) => Object.values(fan).join(', '));
-      const fanContext = `The following is the data about fans in the format (${columns.join(', ')})
-      ${rows.join('\n')}`;
-      context.push(fanContext);
-    }
+    // if (fans?.length && fans[0]) {
+    //   const columns = Object.keys(fans[0]);
+    //   const rows = fans.map((fan) => Object.values(fan).join(', '));
+    //   const fanContext = `The following is the data about fans in the format (${columns.join(', ')})
+    //   ${rows.join('\n')}`;
+    //   context.push(fanContext);
+    // }
 
     return context.join('\n');
   }
@@ -216,41 +202,30 @@ Please use this information to provide accurate and relevant responses and don't
       chatReferenceId: string;
     } & Database['public']['Tables']['chats']['Update'],
   ) {
-    const logger = await getLogger();
     const { chatReferenceId, ...updateParams } = params;
 
-    logger.info(params, `Updating chat...`);
-
-    const { data, error } = await this.client
+    const { error } = await this.client
       .from('chats')
       .update(updateParams)
       .eq('reference_id', chatReferenceId);
 
     if (error) {
-      logger.error(error, `Error updating chat`);
+      console.error(error, `Error updating chat`);
 
       throw error;
     }
-
-    logger.info(data, `Successfully updated chat`);
   }
 
   async deleteChat(params: { chatReferenceId: string }) {
-    const logger = await getLogger();
-
-    logger.info(params, `Deleting chat...`);
-
     const { error } = await this.client
       .from('chats')
       .delete()
       .eq('reference_id', params.chatReferenceId);
 
     if (error) {
-      logger.error(error, `Error deleting chat`);
+      console.error(error, `Error deleting chat`);
 
       throw error;
     }
-
-    logger.info(params, `Successfully deleted chat`);
   }
 }

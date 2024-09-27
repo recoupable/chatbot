@@ -14,14 +14,5 @@ export const zodParseFactory =
   };
 
 export async function captureException(exception: unknown) {
-  const { getServerMonitoringService } = await import('@kit/monitoring/server');
-
-  const service = await getServerMonitoringService();
-
-  await service.ready();
-
-  const error =
-    exception instanceof Error ? exception : new Error(exception as string);
-
-  return service.captureException(error);
+  return console.error(exception);
 }

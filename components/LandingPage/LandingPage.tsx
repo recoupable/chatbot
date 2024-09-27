@@ -9,6 +9,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import SubmitButton from "./SubmitButton";
+import { useCsrfToken } from "@/packages/shared/src/hooks";
+import { useChat } from "ai/react";
+import { useQueryClient } from "@tanstack/react-query";
+import Messages from "./Messages";
 
 const RecordIcon = () => (
   <svg
@@ -74,32 +78,39 @@ const MobileLogo = () => (
 );
 
 export default function LandingPage() {
-  const [inputValue, setInputValue] = useState("");
   const [isChatboxFocused, setIsChatboxFocused] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const csrfToken = useCsrfToken();
+  const accountId = "3664dcb4-164f-4566-8e7c-20b2c93f9951";
+  const queryClient = useQueryClient();
+
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: `/api/chat`,
+    headers: {
+      "X-CSRF-Token": csrfToken,
+    },
+    body: {
+      accountId,
+    },
+    onError: console.error,
+    onFinish: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["credits", accountId],
+      });
+    },
+  });
+  console.log("INPUT", input);
+  console.log("MESSAGES", messages);
 
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [inputValue]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    console.log("SWEETS CALL CHATGPT API");
-    e.preventDefault();
-    console.log("Submitted:", inputValue);
-    console.log("Attached files:", attachedFiles);
-    setInputValue("");
-    setAttachedFiles([]);
-  };
+  }, [input]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     setMousePosition({ x: e.clientX, y: e.clientY });
@@ -263,7 +274,7 @@ export default function LandingPage() {
               >
                 <textarea
                   ref={textareaRef}
-                  value={inputValue}
+                  value={input}
                   onChange={handleInputChange}
                   onFocus={() => setIsChatboxFocused(true)}
                   onBlur={() => setIsChatboxFocused(false)}
@@ -317,6 +328,9 @@ export default function LandingPage() {
                 </div>
               )}
             </form>
+
+            {/* Chat messages display */}
+            <Messages messages={messages} />
 
             <div className="flex flex-wrap justify-center gap-2">
               <button

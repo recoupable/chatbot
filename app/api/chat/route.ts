@@ -8,17 +8,9 @@ import { createChatLLMService, StreamResponseSchema } from '@/lib/server/chat-ll
 
 export const dynamic = 'force-dynamic';
 
-let FAKE_STREAMER = false;
-
-if (process.env.NODE_ENV === 'production') {
-  FAKE_STREAMER = false;
-}
-
 export const POST = enhanceRouteHandler(
-  async ({ body, params }) => {
-    if (FAKE_STREAMER) {
-      return new StreamingTextResponse(fakeDataStreamer());
-    }
+  async ({ body }) => {
+    console.log("POSTING...");
 
     const client = getSupabaseServerClient();
 
@@ -26,9 +18,12 @@ export const POST = enhanceRouteHandler(
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const service = createChatLLMService(client as any, adminClient as any);
-    const referenceId = params.referenceId as string;
+    console.log("service", service);
+    const referenceId = "if1Fg9bo"; // hard coded for demo
 
     try {
+    console.log("body", body);
+    
       return await service.streamResponse(body, referenceId);
     } catch (error) {
       console.error(error);
