@@ -74,7 +74,6 @@ const MobileLogo = () => (
 
 export default function LandingPage() {
   const [inputValue, setInputValue] = useState("");
-  const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [isChatboxFocused, setIsChatboxFocused] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
@@ -156,11 +155,7 @@ export default function LandingPage() {
     >
       {/* Icons and Logo */}
       <div className="fixed left-0 top-0 bottom-0 w-12 flex flex-col items-center py-4 z-30">
-        <div
-          className="relative w-8 h-8 mb-8 transition-all duration-300 ease-in-out"
-          onMouseEnter={() => setIsLogoHovered(true)}
-          onMouseLeave={() => setIsLogoHovered(false)}
-        >
+        <div className="relative w-8 h-8 mb-8 transition-all duration-300 ease-in-out">
           <MobileLogo />
         </div>
         <div className="flex-grow flex flex-col items-center justify-center space-y-6">
@@ -343,7 +338,7 @@ export default function LandingPage() {
                 className="bubble-prompt px-3 py-1 bg-[#00309A] border border-white rounded-full text-[10px] sm:text-xs transition-all duration-150 ease-in-out flex items-center font-normal"
                 aria-label="Ask about TikTok trends"
               >
-                What's trending with fans on TikTok?
+                What&apos;s trending with fans on TikTok?
                 <ArrowUpRightIcon className="w-2 h-2 ml-1" aria-hidden="true" />
               </button>
             </div>
