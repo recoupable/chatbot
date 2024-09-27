@@ -1,10 +1,7 @@
-import { StreamingTextResponse } from 'ai';
-
-
-import { enhanceRouteHandler } from '@/packages/next/src/routes';
 import { getSupabaseServerClient } from '@/packages/supabase/src/clients/server-client';
 import { getSupabaseServerAdminClient } from '@/packages/supabase/src/clients/server-admin-client';
 import { createChatLLMService, StreamResponseSchema } from '@/lib/server/chat-llm.service';
+import { enhanceRouteHandler } from '@/packages/next/src/routes';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,29 +34,3 @@ export const POST = enhanceRouteHandler(
     schema: StreamResponseSchema,
   },
 );
-
-function fakeDataStreamer() {
-  let timerId: number | undefined;
-  const encoder = new TextEncoder();
-  let closed = false;
-
-  return new ReadableStream({
-    start(controller) {
-      timerId = setInterval(() => {
-        if (closed) return;
-
-        controller.enqueue(encoder.encode('TEXT'));
-      }, 200) as unknown as number;
-
-      setTimeout(() => {
-        controller.close();
-        closed = true;
-      }, 5_000);
-    },
-    cancel() {
-      if (typeof timerId === 'number') {
-        clearInterval(timerId);
-      }
-    },
-  });
-}

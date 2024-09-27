@@ -8,7 +8,6 @@ import { User } from '@supabase/supabase-js';
 
 import { z } from 'zod';
 
-import { verifyCaptchaToken } from '@kit/auth/captcha/server';
 import { requireUser } from '@kit/supabase/require-user';
 import { getSupabaseServerClient } from '@kit/supabase/server-client';
 
@@ -80,21 +79,6 @@ export const enhanceRouteHandler = <
     type UserParam = Params['auth'] extends false ? undefined : User;
 
     let user: UserParam = undefined as UserParam;
-
-    // Check if the captcha token should be verified
-    const shouldVerifyCaptcha = params?.captcha ?? false;
-
-    // Verify the captcha token if required and setup
-    if (shouldVerifyCaptcha) {
-      const token = captchaTokenGetter(request);
-
-      // If the captcha token is not provided, return a 400 response.
-      if (token) {
-        await verifyCaptchaToken(token);
-      } else {
-        return new Response('Captcha token is required', { status: 400 });
-      }
-    }
 
     const client = getSupabaseServerClient();
 

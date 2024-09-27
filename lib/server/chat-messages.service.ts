@@ -1,12 +1,8 @@
 import 'server-only';
 
 import { SupabaseClient } from '@supabase/supabase-js';
-
 import { z } from 'zod';
-
-
-
-import { ChatSettingsSchema } from '../schema/chat-settings.schema';
+import { ChatSettingsSchema } from './chat-settings.schema';
 import { Database } from '../database.types';
 
 export function createChatMessagesService(client: SupabaseClient<Database>) {
@@ -177,9 +173,8 @@ Please use this information to provide accurate and relevant responses and don't
       temperature: settings.temperature ?? 0.7,
     };
   }
-
   private async fetchRelevantContext(): Promise<string> {
-    const context = [];
+    const context: string[] = [];
 
     // const { data: fans } = await this.client
     //   .from('fans')

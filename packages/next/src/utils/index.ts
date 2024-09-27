@@ -14,5 +14,5 @@ export const zodParseFactory =
   };
 
 export async function captureException(exception: unknown) {
-  return console.error(exception);
+  console.error(exception);
 }
