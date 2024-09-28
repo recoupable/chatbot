@@ -175,7 +175,7 @@ Please use this information to provide accurate and relevant responses and don't
       const parsedStateOfMusicData = JSON.parse(stateOfMusicData);
 
       const context = {
-        additional_analysis: parsedAdditionalAnalysis.additional_analysis.map(item => ({
+        additional_analysis: parsedAdditionalAnalysis.additional_analysis.map((item: { topic: string; key_findings: string[] }) => ({
           topic: item.topic,
           key_findings: item.key_findings
         })),
@@ -185,7 +185,7 @@ Please use this information to provide accurate and relevant responses and don't
             title: parsedStateOfMusicData.prologue.title,
             key_points: parsedStateOfMusicData.prologue.key_points
           },
-          sections: parsedStateOfMusicData.sections.map(section => ({
+          sections: parsedStateOfMusicData.sections.map((section: Section) => ({
             title: section.title,
             key_findings: section.key_findings
           }))
@@ -230,4 +230,9 @@ Please use this information to provide accurate and relevant responses and don't
       throw error;
     }
   }
+}
+
+interface Section {
+  title: string;
+  key_findings: string[];
 }
