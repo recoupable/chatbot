@@ -1,7 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import SubmitButton from "./SubmitButton";
 
-const ChatInput = ({ handleSubmit, handleInputChange, input }) => {
+interface ChatInputProps {
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  input: string;
+}
+
+const ChatInput: React.FC<ChatInputProps> = ({
+  handleSubmit,
+  handleInputChange,
+  input,
+}) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isChatboxFocused, setIsChatboxFocused] = useState(false);
 
