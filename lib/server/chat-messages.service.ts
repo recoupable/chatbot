@@ -4,8 +4,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { ChatSettingsSchema } from './chat-settings.schema';
 import { Database } from '../database.types';
-import { promises as fs } from 'fs';
-
+import getWaterAndMusicReportContext from '../getWaterAndMusicReportContext';
 export function createChatMessagesService(client: SupabaseClient<Database>) {
   return new ChatMessagesService(client);
 }
@@ -168,29 +167,7 @@ Please use this information to provide accurate and relevant responses and don't
 
   private async fetchRelevantContext(): Promise<string> {
     try {
-      const additionalAnalysis = await fs.readFile('data/additional_analysis.json', 'utf-8');
-      const stateOfMusicData = await fs.readFile('data/state_of_music_data_2024.json', 'utf-8');
-
-      const parsedAdditionalAnalysis = JSON.parse(additionalAnalysis);
-      const parsedStateOfMusicData = JSON.parse(stateOfMusicData);
-
-      const context = {
-        additional_analysis: parsedAdditionalAnalysis.additional_analysis.map((item: { topic: string; key_findings: string[] }) => ({
-          topic: item.topic,
-          key_findings: item.key_findings
-        })),
-        state_of_music_data: {
-          report_title: parsedStateOfMusicData.report_title,
-          prologue: {
-            title: parsedStateOfMusicData.prologue.title,
-            key_points: parsedStateOfMusicData.prologue.key_points
-          },
-          sections: parsedStateOfMusicData.sections.map((section: Section) => ({
-            title: section.title,
-            key_findings: section.key_findings
-          }))
-        }
-      };
+      const context = await getWaterAndMusicReportContext();
 
       return JSON.stringify(context, null, 2);
     } catch (error) {
@@ -232,7 +209,4 @@ Please use this information to provide accurate and relevant responses and don't
   }
 }
 
-interface Section {
-  title: string;
-  key_findings: string[];
-}
+
