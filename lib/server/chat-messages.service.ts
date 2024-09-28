@@ -4,6 +4,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { ChatSettingsSchema } from './chat-settings.schema';
 import { Database } from '../database.types';
+import { promises as fs } from 'fs';
 
 export function createChatMessagesService(client: SupabaseClient<Database>) {
   return new ChatMessagesService(client);
@@ -164,23 +165,38 @@ Please use this information to provide accurate and relevant responses and don't
       temperature: settings.temperature ?? 0.7,
     };
   }
+
   private async fetchRelevantContext(): Promise<string> {
-    const context: string[] = [];
+    try {
+      const additionalAnalysis = await fs.readFile('data/additional_analysis.json', 'utf-8');
+      const stateOfMusicData = await fs.readFile('data/state_of_music_data_2024.json', 'utf-8');
 
-    // const { data: fans } = await this.client
-    //   .from('fans')
-    //   .select('country, city, product, playlist, recommendations, recentlyPlayed, saved_podcasts, saved_audiobooks, saved_shows, top_artists_long_term')
-    //   .limit(100);
+      const parsedAdditionalAnalysis = JSON.parse(additionalAnalysis);
+      const parsedStateOfMusicData = JSON.parse(stateOfMusicData);
 
-    // if (fans?.length && fans[0]) {
-    //   const columns = Object.keys(fans[0]);
-    //   const rows = fans.map((fan) => Object.values(fan).join(', '));
-    //   const fanContext = `The following is the data about fans in the format (${columns.join(', ')})
-    //   ${rows.join('\n')}`;
-    //   context.push(fanContext);
-    // }
+      const context = {
+        additional_analysis: parsedAdditionalAnalysis.additional_analysis.map(item => ({
+          topic: item.topic,
+          key_findings: item.key_findings
+        })),
+        state_of_music_data: {
+          report_title: parsedStateOfMusicData.report_title,
+          prologue: {
+            title: parsedStateOfMusicData.prologue.title,
+            key_points: parsedStateOfMusicData.prologue.key_points
+          },
+          sections: parsedStateOfMusicData.sections.map(section => ({
+            title: section.title,
+            key_findings: section.key_findings
+          }))
+        }
+      };
 
-    return context.join('\n');
+      return JSON.stringify(context, null, 2);
+    } catch (error) {
+      console.error('Error reading or parsing JSON files:', error);
+      return '{}';
+    }
   }
 
   async updateChat(
