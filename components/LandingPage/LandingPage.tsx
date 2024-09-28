@@ -102,8 +102,6 @@ export default function LandingPage() {
       });
     },
   });
-  console.log("INPUT", input);
-  console.log("MESSAGES", messages);
 
   useEffect(() => {
     if (textareaRef.current) {

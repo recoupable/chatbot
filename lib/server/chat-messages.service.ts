@@ -16,9 +16,6 @@ class ChatMessagesService {
     const perPage = 35;
     const startOffset = params.page * perPage;
     const endOffset = startOffset + perPage;
-
-    console.log('Fetching messages with params:', params);
-
     const { data, error } = await this.client
       .from('chat_messages')
       .select(
@@ -37,8 +34,6 @@ class ChatMessagesService {
       console.error('Error fetching messages:', error);
       throw error;
     }
-
-    console.log('Fetched messages:', data);
     return data;
   }
 
@@ -76,8 +71,6 @@ class ChatMessagesService {
       role: 'user' | 'assistant';
     }>;
   }) {
-    console.log('Inserting message with params:', params);
-
     const { data, error } = await this.client.from('chat_messages').insert(
       params.messages.map((message) => ({
         chat_id: params.chatId,
@@ -92,8 +85,6 @@ class ChatMessagesService {
 
       throw error;
     }
-
-    console.log('Message inserted:', data);
     return data;
   }
 

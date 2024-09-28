@@ -89,8 +89,6 @@ class ChatLLMService {
     { messages, accountId }: z.infer<typeof StreamResponseSchema>,
     referenceId: string,
   ) {
-    console.log("streamResponse for messages", messages);
-
     // use a normal service instance using the current user RLS
     const chatMessagesService = createChatMessagesService(this.adminClient);
 
@@ -106,7 +104,6 @@ class ChatLLMService {
 
     // retrieve the chat settings
     const settings = await chatMessagesService.getChatSettings(referenceId);
-    console.log("settings", settings);
     const systemMessage = settings.systemMessage;
     const maxTokens = settings.maxTokens;
 
@@ -125,8 +122,6 @@ class ChatLLMService {
       }
     }
 
-    console.log("streaming...", decodedHistory);
-
     // we use the openai model to generate a response
     const result = await streamText({
       model: openai(settings.model) as LanguageModelV1,
@@ -135,8 +130,6 @@ class ChatLLMService {
       temperature: settings.temperature,
       messages,
     });
-    console.log("result", result);
-
 
     const stream = result.toAIStream({
       onFinal: async (completion) => {

@@ -7,26 +7,18 @@ export const dynamic = 'force-dynamic';
 
 export const POST = enhanceRouteHandler(
   async ({ body }) => {
-    console.log("POSTING...");
-
     const client = getSupabaseServerClient();
-
     const adminClient = getSupabaseServerAdminClient();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const service = createChatLLMService(client as any, adminClient as any);
-    console.log("service", service);
     const referenceId = "if1Fg9bo"; // hard coded for demo
 
-    try {
-    console.log("body", body);
-    
+    try {    
       return await service.streamResponse(body, referenceId);
     } catch (error) {
       console.error(error);
-
       const message = error instanceof Error ? error.message : 'Unknown error';
-
       return new Response(message, { status: 500 });
     }
   },
