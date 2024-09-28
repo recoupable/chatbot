@@ -1,16 +1,9 @@
 import 'server-only';
 
 import { isRedirectError } from 'next/dist/client/components/redirect';
-import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
-
 import { User } from '@supabase/supabase-js';
-
 import { z } from 'zod';
-
-import { requireUser } from '@kit/supabase/require-user';
-import { getSupabaseServerClient } from '@kit/supabase/server-client';
-
 import { captureException, zodParseFactory } from '../utils';
 
 interface Config<Schema> {
@@ -79,23 +72,6 @@ export const enhanceRouteHandler = <
     type UserParam = Params['auth'] extends false ? undefined : User;
 
     let user: UserParam = undefined as UserParam;
-
-    const client = getSupabaseServerClient();
-
-    const shouldVerifyAuth = params?.auth ?? true;
-
-    // Check if the user should be authenticated
-    if (shouldVerifyAuth) {
-      // Get the authenticated user
-      const auth = await requireUser(client);
-
-      // If the user is not authenticated, redirect to the specified URL.
-      if (auth.error) {
-        return redirect(auth.redirectTo);
-      }
-
-      user = auth.data as UserParam;
-    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let body: any;
