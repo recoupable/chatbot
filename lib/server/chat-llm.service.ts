@@ -59,7 +59,7 @@ class ChatLLMService {
     await this.assertEnoughCredits(params.accountId);
 
     const result = await generateText({
-      model: openai('gpt-3.5-turbo') as LanguageModelV1,
+      model: openai('gpt-4o') as LanguageModelV1,
       system:
         'You convert a user message to a chat name for a seamless experience.',
       messages: [
