@@ -166,21 +166,20 @@ export default function LandingPage() {
           </header>
 
           <main className="flex-grow flex flex-col items-center justify-center text-center p-3 sm:p-4">
-            <h1 className="mb-2 tracking-tight">
-              <div className="font-['Joyride_Std'] text-xl sm:text-2xl md:text-3xl leading-tight hover-outline-container">
-                {wrapTextInSpans("A CHATB")}
-                <span className="font-['JoyrideALT'] text-[#EDFF44]">O</span>
-                {wrapTextInSpans("T MADE FOR")}
-              </div>
-              <div className="font-['Joyride_Std'] text-xl sm:text-2xl md:text-3xl leading-tight hover-outline-container">
-                {wrapTextInSpans("THE MUSIC BUSINESS")}
-              </div>
-            </h1>
-            <p className="mb-4 text-[10px] sm:text-xs text-white max-w-lg font-inter font-light hover-outline-container">
-              {wrapTextInSpans(
-                "Meet your new assistant for engagement, strategy, and growth."
-              )}
-            </p>
+  <h1 className="mb-2 tracking-tight">
+    <span className="font-['Joyride_Std'] text-xl sm:text-2xl md:text-3xl leading-tight hover-outline-container">
+      {wrapTextInSpans("A CHATB")}
+      <span className="font-['JoyrideALT'] text-[#EDFF44]">O</span>
+      {wrapTextInSpans("T MADE FOR")}
+    </span>
+    <br /> {/* Ensure a line break here */}
+    <span className="font-['Joyride_Std'] text-xl sm:text-2xl md:text-3xl leading-tight hover-outline-container">
+      {wrapTextInSpans("THE MUSIC INDUSTRY")}
+    </span>
+  </h1>
+  <p className="mb-4 text-[10px] sm:text-xs text-white max-w-lg font-inter font-light hover-outline-container">
+    {wrapTextInSpans("Meet your new assistant for engagement, strategy, and growth.")}
+  </p>
             <Chat />
           </main>
           <footer className="p-3 sm:p-4 flex flex-col items-center">

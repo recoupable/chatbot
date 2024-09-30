@@ -14,10 +14,25 @@
   }
 }
 
+/* Add the new fonts but don't apply them globally */
+@font-face {
+  font-family: 'JoyrideALT';
+  src: url('/fonts/JoyrideALT.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'JoyrideSTD';
+  src: url('/fonts/JoyrideSTD.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif; /* Keeping the default system fonts */
 }
 
 @layer utilities {
